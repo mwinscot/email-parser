@@ -48,11 +48,12 @@ export default function EmailParser() {
   }, [emailTemplate, getEmailContext])
 
   const copyToClipboard = useCallback(async (email: string, content: string): Promise<void> => {
+    const fullEmail = `To: ${email}\n\n${content}`
     try {
-      const fullEmail = `To: ${email}\n\n${content}`
       await navigator.clipboard.writeText(fullEmail)
       alert('Email copied to clipboard!')
-    } catch (_error) {
+    } catch {
+      // Remove the error parameter entirely since we're not using it
       alert('Failed to copy email. Please copy manually.')
     }
   }, [])
