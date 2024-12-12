@@ -19,6 +19,12 @@ export default function EmailParser() {
     return [...new Set(found)]
   }, [])
 
+  const getEmailContext = useCallback((email: string): string => {
+    const paragraphs = sourceEmail.split('\n\n')
+    const relevantParagraph = paragraphs.find(p => p.includes(email)) || ''
+    return relevantParagraph
+  }, [sourceEmail])
+
   const parseSourceEmail = useCallback((): void => {
     const emails = extractEmails(sourceEmail)
     setExtractedEmails(emails)
@@ -39,20 +45,14 @@ export default function EmailParser() {
       ...prev,
       [recipientEmail]: processed
     }))
-  }, [emailTemplate])
-
-  const getEmailContext = useCallback((email: string): string => {
-    const paragraphs = sourceEmail.split('\n\n')
-    const relevantParagraph = paragraphs.find(p => p.includes(email)) || ''
-    return relevantParagraph
-  }, [sourceEmail])
+  }, [emailTemplate, getEmailContext])
 
   const copyToClipboard = useCallback(async (email: string, content: string): Promise<void> => {
     try {
       const fullEmail = `To: ${email}\n\n${content}`
       await navigator.clipboard.writeText(fullEmail)
       alert('Email copied to clipboard!')
-    } catch (err) {
+    } catch (_error) {
       alert('Failed to copy email. Please copy manually.')
     }
   }, [])
